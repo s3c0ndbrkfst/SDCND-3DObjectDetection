@@ -42,15 +42,24 @@ def show_pcl(pcl):
     print("student task ID_S1_EX2")
 
     # step 1 : initialize open3d with key callback and create window
-
+    vis_pcl = o3d.visualization.VisualizerWithKeyCallback()
+    vis_pcl.create_window(window_name='Lidar Point Cloud')
     # step 2 : create instance of open3d point-cloud class
-
+    pcd = o3d.geometry.PointCloud()
     # step 3 : set points in pcd instance by converting the point-cloud into 3d vectors (using open3d function Vector3dVector)
-
+    pcd.points = o3d.utility.Vector3dVector(pcl[:, :3])
     # step 4 : for the first frame, add the pcd instance to visualization using add_geometry; for all other frames, use update_geometry instead
-
+    vis_pcl.add_geometry(pcd)
     # step 5 : visualize point cloud and keep window open until right-arrow is pressed (key-code 262)
-
+    right_arrow_key_code = 262
+    space_bar_key_code = 32
+    vis_pcl.register_key_callback(
+        right_arrow_key_code, lambda vis_pcl: vis_pcl.close())
+    vis_pcl.register_key_callback(
+        space_bar_key_code, lambda vis_pcl: vis_pcl.destroy_window())
+    vis_pcl.update_renderer()
+    vis_pcl.poll_events()
+    vis_pcl.run()
     #######
     ####### ID_S1_EX2 END #######
 
