@@ -11,9 +11,6 @@
 #
 
 # general package imports
-import misc.objdet_tools as tools
-from tools.waymo_reader.simple_waymo_open_dataset_reader import dataset_pb2, label_pb2
-from tools.waymo_reader.simple_waymo_open_dataset_reader import utils as waymo_utils
 import cv2
 import numpy as np
 import torch
@@ -28,9 +25,11 @@ SCRIPT_DIR = os.path.dirname(os.path.realpath(
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 # waymo open dataset reader
+from tools.waymo_reader.simple_waymo_open_dataset_reader import utils as waymo_utils
+from tools.waymo_reader.simple_waymo_open_dataset_reader import dataset_pb2, label_pb2
 
 # object detection tools and helper functions
-
+import misc.objdet_tools as tools
 
 # visualize lidar point-cloud
 def show_pcl(pcl):
