@@ -14,7 +14,10 @@
 import cv2
 import numpy as np
 import torch
+
+# specific package imports
 import zlib
+import open3d as o3d
 
 # add project directory to python path to enable relative imports
 import os
