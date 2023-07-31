@@ -230,14 +230,20 @@ def detect_objects(input_bev_maps, model, configs):
     print("student task ID_S3_EX2")
     objects = [] 
 
+    x_bound = configs.lim_x[1] - configs.lim_x[0]
+    y_bound = configs.lim_y[1] - configs.lim_y[0]
     ## step 1 : check whether there are any detections
-
+    if detections != []:
         ## step 2 : loop over all detections
-        
+        for obj in detections:
+            obj_id, obj_x, obj_y, obj_z, obj_h, obj_w, obj_l, obj_yaw = obj
             ## step 3 : perform the conversion using the limits for x, y and z set in the configs structure
-        
+            x = obj_y / configs.bev_height * x_bound
+            y = obj_x / configs.bev_width * y_bound - y_bound/2.0 
+            w = obj_w / configs.bev_width * y_bound 
+            l = obj_l / configs.bev_height * x_bound
             ## step 4 : append the current object to the 'objects' array
-        
+            objects.append([obj_id, x, y, obj_z, obj_h, w, l, -obj_yaw])    
     #######
     ####### ID_S3_EX2 START #######   
     
