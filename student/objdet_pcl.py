@@ -51,12 +51,12 @@ def show_pcl(pcl):
     # step 4 : for the first frame, add the pcd instance to visualization using add_geometry; for all other frames, use update_geometry instead
     vis_pcl.add_geometry(pcd)
     # step 5 : visualize point cloud and keep window open until right-arrow is pressed (key-code 262)
-    right_arrow_key_code = 262
-    space_bar_key_code = 32
+    right_arrow_key = 262
+    q_key = 81
     vis_pcl.register_key_callback(
-        right_arrow_key_code, lambda vis_pcl: vis_pcl.close())
+        right_arrow_key, lambda vis_pcl: vis_pcl.close())
     vis_pcl.register_key_callback(
-        space_bar_key_code, lambda vis_pcl: vis_pcl.destroy_window())
+        q_key, lambda vis_pcl: vis_pcl.destroy_window())
     vis_pcl.update_renderer()
     vis_pcl.poll_events()
     vis_pcl.run()
