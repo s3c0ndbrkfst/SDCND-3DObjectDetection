@@ -72,29 +72,25 @@ def load_configs_model(model_name='darknet', configs=None):
             configs.model_path, 'pretrained', 'fpn_resnet_18_epoch_300.pth')
         configs.saved_fn = 'fpn_resnet'
         configs.arch = 'fpn_resnet'
-        configs.K =50
+        configs.K = 50
         configs.num_samples = None
         configs.num_workers = 1
-        configs.batch_size = 1
+        configs.batch_size = 4
         configs.peak_thresh = 0.2
         configs.conf_thresh = 0.5
-
         configs.pin_memory = True
-        configs.distributed = False  # For testing on 1 GPU only
-
+        configs.distributed = False
         configs.input_size = (608, 608)
         configs.hm_size = (152, 152)
         configs.down_ratio = 4
         configs.max_objects = 50
-
         configs.imagenet_pretrained = False
         configs.head_conv = 64
         configs.num_classes = 3
         configs.num_center_offset = 2
         configs.num_z = 1
         configs.num_dim = 3
-        configs.num_direction = 2  # sin, cos
-
+        configs.num_direction = 2
         configs.heads = {
             'hm_cen': configs.num_classes,
             'cen_offset': configs.num_center_offset,
