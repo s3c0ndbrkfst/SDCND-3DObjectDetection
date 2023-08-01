@@ -211,7 +211,6 @@ def detect_objects(input_bev_maps, model, configs):
             print("student task ID_S3_EX1-5")
             outputs['hm_cen'] = _sigmoid(outputs['hm_cen'])
             outputs['cen_offset'] = _sigmoid(outputs['cen_offset'])
-            # detections size (batch_size, K, 10)
             detections = decode(outputs['hm_cen'], outputs['cen_offset'], outputs['direction'], outputs['z_coor'],
                                 outputs['dim'], K=configs.K)
             detections = detections.cpu().numpy().astype(np.float32)
