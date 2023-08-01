@@ -33,35 +33,48 @@ import misc.objdet_tools as tools
 
 # compute various performance measures to assess object detection
 def measure_detection_performance(detections, labels, labels_valid, min_iou=0.5):
-    
-     # find best detection for each valid label 
-    true_positives = 0 # no. of correctly detected objects
+
+    # find best detection for each valid label
+    true_positives = 0  # no. of correctly detected objects
     center_devs = []
     ious = []
     for label, valid in zip(labels, labels_valid):
         matches_lab_det = []
-        if valid: # exclude all labels from statistics which are not considered valid
-            
+        if valid:  # exclude all labels from statistics which are not considered valid
+
             # compute intersection over union (iou) and distance between centers
 
-            ####### ID_S4_EX1 START #######     
+            ####### ID_S4_EX1 START #######
             #######
             print("student task ID_S4_EX1 ")
 
-            ## step 1 : extract the four corners of the current label bounding-box
-            
-            ## step 2 : loop over all detected objects
+            # step 1 : extract the four corners of the current label bounding-box
+            bbox = label.box
+            bbox_lab = tools.compute_box_corners(
+                bbox.center_x, bbox.center_y, bbox.width, bbox.length, bbox.heading)
 
-                ## step 3 : extract the four corners of the current detection
-                
-                ## step 4 : computer the center distance between label and detection bounding-box in x, y, and z
-                
-                ## step 5 : compute the intersection over union (IOU) between label and detection bounding-box
-                
-                ## step 6 : if IOU exceeds min_iou threshold, store [iou,dist_x, dist_y, dist_z] in matches_lab_det and increase the TP count
-                
+            # step 2 : loop over all detected objects
+            for det in detections:
+                # step 3 : extract the four corners of the current detection
+                _, det_x, det_y, det_z, _, det_w, det_l, det_yaw = det
+                bbox_det = tools.compute_box_corners(
+                    det_x, det_y, det_w, det_l, det_yaw)
+                # step 4 : computer the center distance between label and detection bounding-box in x, y, and z
+                x_dist = bbox.center_x - det_x
+                y_dist = bbox.center_y - det_y
+                z_dist = bbox.center_z - det_z
+                # step 5 : compute the intersection over union (IOU) between label and detection bounding-box
+                poly_lab = Polygon(bbox_lab)
+                poly_det = Polygon(bbox_det)
+                intersection = poly_lab.intersection(poly_det).area
+                union = poly_lab.union(poly_det).area
+                iou = intersection / union
+                # step 6 : if IOU exceeds min_iou threshold, store [iou,dist_x, dist_y, dist_z] in matches_lab_det and increase the TP count
+                if iou > min_iou:
+                    matches_lab_det.append([iou, x_dist, y_dist, z_dist])
+                    true_positives += 1
             #######
-            ####### ID_S4_EX1 END #######     
+            ####### ID_S4_EX1 END #######
             
         # find best match and compute metrics
         if matches_lab_det:
