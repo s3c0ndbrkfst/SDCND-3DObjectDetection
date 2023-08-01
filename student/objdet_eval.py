@@ -90,6 +90,7 @@ def measure_detection_performance(detections, labels, labels_valid, min_iou=0.5)
 
     # step 1 : compute the total number of positives present in the scene
     all_positives = labels_valid.sum()
+    true_positives = len(ious)
 
     # step 2 : compute the number of false negatives
     false_negatives = all_positives - true_positives
@@ -128,7 +129,7 @@ def compute_performance_stats(det_performance_all):
     true_positives = sum(pos_negs_arr[:, 1])
     false_negatives = sum(pos_negs_arr[:, 2])
     false_positives = sum(pos_negs_arr[:, 3])
-    
+
     # step 2 : compute precision
     precision = true_positives / (true_positives + false_positives)
 
