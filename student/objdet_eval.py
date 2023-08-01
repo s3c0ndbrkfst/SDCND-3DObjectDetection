@@ -82,25 +82,24 @@ def measure_detection_performance(detections, labels, labels_valid, min_iou=0.5)
             ious.append(best_match[0])
             center_devs.append(best_match[1:])
 
-
-    ####### ID_S4_EX2 START #######     
+    ####### ID_S4_EX2 START #######
     #######
     print("student task ID_S4_EX2")
-    
+
     # compute positives and negatives for precision/recall
-    
-    ## step 1 : compute the total number of positives present in the scene
+
+    # step 1 : compute the total number of positives present in the scene
     all_positives = labels_valid.sum()
 
-    ## step 2 : compute the number of false negatives
+    # step 2 : compute the number of false negatives
     false_negatives = all_positives - true_positives
 
-    ## step 3 : compute the number of false positives
+    # step 3 : compute the number of false positives
     false_positives = len(detections) - true_positives
-    
+
     #######
-    ####### ID_S4_EX2 END #######     
-    
+    ####### ID_S4_EX2 END #######
+
     pos_negs = [all_positives, true_positives, false_negatives, false_positives]
     det_performance = [ious, center_devs, pos_negs]
     
@@ -118,22 +117,27 @@ def compute_performance_stats(det_performance_all):
         ious.append(item[0])
         center_devs.append(item[1])
         pos_negs.append(item[2])
-    
-    ####### ID_S4_EX3 START #######     
-    #######    
+
+    ####### ID_S4_EX3 START #######
+    #######
     print('student task ID_S4_EX3')
 
-    ## step 1 : extract the total number of positives, true positives, false negatives and false positives
+    # step 1 : extract the total number of positives, true positives, false negatives and false positives
+    pos_negs_arr = np.array(pos_negs)
+    positives = sum(pos_negs_arr[:, 0])
+    true_positives = sum(pos_negs_arr[:, 1])
+    false_negatives = sum(pos_negs_arr[:, 2])
+    false_positives = sum(pos_negs_arr[:, 3])
     
-    ## step 2 : compute precision
-    precision = 0.0
+    # step 2 : compute precision
+    precision = true_positives / (true_positives + false_positives)
 
-    ## step 3 : compute recall 
-    recall = 0.0
+    # step 3 : compute recall
+    recall = true_positives / (true_positives + false_negatives)
 
-    #######    
-    ####### ID_S4_EX3 END #######     
-    print('precision = ' + str(precision) + ", recall = " + str(recall))   
+    #######
+    ####### ID_S4_EX3 END #######
+    print('precision = ' + str(precision) + ", recall = " + str(recall))
 
     # serialize intersection-over-union and deviations in x,y,z
     ious_all = [element for tupl in ious for element in tupl]
