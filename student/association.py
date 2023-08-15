@@ -45,7 +45,7 @@ class Association:
             for j in range(M):
                 meas = meas_list[j]
                 dist = self.MHD(track, meas, KF)
-                if self.gating(dist, meas.sensor):
+                if self.gating(dist, meas.sensor):  # apply gating
                     self.association_matrix[i, j] = dist
                 
     def get_closest_track_and_meas(self):
@@ -75,6 +75,7 @@ class Association:
         return update_track, update_meas
 
     def gating(self, MHD, sensor):
+        # implement gating method with chi-square-distribution
         limit = chi2.ppf(params.gating_threshold, sensor.dim_meas)
         if MHD < limit:
             return True
@@ -87,39 +88,42 @@ class Association:
         gamma = KF.gamma(track, meas)
         S = KF.S(track, meas, H)
 
-        MHD = gamma.transpose()*np.linalg.inv(S)*gamma  # Mahalanobis distance formula
+        MHD = gamma.transpose()*np.linalg.inv(S)*gamma
+
         return MHD
     
     def associate_and_update(self, manager, meas_list, KF):
         # associate measurements and tracks
         self.associate(manager.track_list, meas_list, KF)
-    
+
         # update associated tracks with measurements
-        while self.association_matrix.shape[0]>0 and self.association_matrix.shape[1]>0:
-            
+        while self.association_matrix.shape[0] > 0 and self.association_matrix.shape[1] > 0:
+
             # search for next association between a track and a measurement
             ind_track, ind_meas = self.get_closest_track_and_meas()
             if np.isnan(ind_track):
                 print('---no more associations---')
                 break
             track = manager.track_list[ind_track]
-            
-            # check visibility, only update tracks in fov    
+
+            # check visibility, only update tracks in fov
             if not meas_list[0].sensor.in_fov(track.x):
                 continue
-            
+
             # Kalman update
-            print('update track', track.id, 'with', meas_list[ind_meas].sensor.name, 'measurement', ind_meas)
+            print('update track', track.id, 'with',
+                  meas_list[ind_meas].sensor.name, 'measurement', ind_meas)
             KF.update(track, meas_list[ind_meas])
-            
-            # update score and track state 
+
+            # update score and track state
             manager.handle_updated_track(track)
-            
+
             # save updated track
             manager.track_list[ind_track] = track
-            
-        # run track management 
-        manager.manage_tracks(self.unassigned_tracks, self.unassigned_meas, meas_list)
-        
-        for track in manager.track_list:            
+
+        # run track management
+        manager.manage_tracks(self.unassigned_tracks,
+                              self.unassigned_meas, meas_list)
+
+        for track in manager.track_list:
             print('track', track.id, 'score =', track.score)

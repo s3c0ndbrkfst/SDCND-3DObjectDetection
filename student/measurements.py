@@ -126,21 +126,21 @@ class Measurement:
     '''Measurement class including measurement values, covariance, timestamp, sensor'''
     def __init__(self, num_frame, z, sensor):
         # create measurement object
-        self.t = (num_frame - 1) * params.dt # time
-        self.sensor = sensor # sensor that generated this measurement
-        
+        self.t = (num_frame - 1) * params.dt  # time
+        self.sensor = sensor  # sensor that generated this measurement
+
         if sensor.name == 'lidar':
             sigma_lidar_x = params.sigma_lidar_x  # load params
             sigma_lidar_y = params.sigma_lidar_y
             sigma_lidar_z = params.sigma_lidar_z
-            self.z = np.zeros((sensor.dim_meas,1))  # measurement vector
+            self.z = np.zeros((sensor.dim_meas, 1))  # measurement vector
             self.z[0] = z[0]
             self.z[1] = z[1]
             self.z[2] = z[2]
-            self.R = np.matrix([[sigma_lidar_x**2, 0, 0], # measurement noise covariance matrix
-                                [0, sigma_lidar_y**2, 0], 
+            self.R = np.matrix([[sigma_lidar_x**2, 0, 0],  # measurement noise covariance matrix
+                                [0, sigma_lidar_y**2, 0],
                                 [0, 0, sigma_lidar_z**2]])
-            
+
             self.width = z[4]
             self.length = z[5]
             self.height = z[3]

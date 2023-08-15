@@ -52,6 +52,7 @@ class Track:
         self.P[0:3, 0:3] = P_pos
         self.P[3:6, 3:6] = P_vel
 
+        # initial attributes
         self.state = 'initialized'
         self.score = 1./params.window
                
