@@ -1,2 +1,19 @@
 # Writeup: Final Project
 
+The first step of this sensor fusion project was to implement an EKF to track a single real-world target with lidar measurement input over time. This step included defining the system matrix F and process noise covariance matrix Q following a constant velocity motion model. These matrices were then applied to the Kalman Filter equations for the prediction and update steps to track a simple single-target scenario using only lidar data. The results, as expected, show only a single track with a mean RMSE of 0.31.
+
+![png](/img/RMSE_step1.png)
+
+The next step was to implement appropriate track management to initialize and delete tracks, and set a track state and track score. The implementation is capable of automatically initializing a new track where unassigned measurements occur, quickly confirming it as a confirmed track, and then deleting the track after it has vanished from the visible range. This is achieved by using appropriate thresholds to define a track as confirmed with a score greater than 0.8, delete a confirmed track if the score drops below 0.6, and to only delete initialized or tentative tracks if the score falls too low, below 0.15, or if the covariance in px or py is larger than the maximum defined value. When tested on the dataset, there is one single track without track losses in between and a RMSE of 0.79. Because this step only uses lidar data, the RMSE is quite high as the lidar detections contain a y-offset which is not accounted for. This will be mitigated by implementing sensor fusion in the next steps.
+
+![png](/img/RMSE_step2.png)
+
+The third step was to implement data association following the Simple Nearest Neighbor (SNN) method to calculate all Mahalanobis distances between tracks and measurements, then iteratively update the closest association pair. Additionally, this step implements gating using a chi-square-distribution to reduce the association complexity by removing unlikely pairs. When tested on the dataset, multiple tracks are updated with multiple measurements but as expected, each measurement is used at most once and each track is updated at most once. The visualization shows that there are no confirmed “ghost tracks” and the RMSE is 0.14, 0.12, and 0.19 for the three identified tracks.
+
+![png](/img/RMSE_step3.png)
+
+The final step was to implement the nonlinear camera measurement model and complete the sensor fusion process. The step provides a method to check whether an object can be seen by the camera or if it is outside of the field of view. Additionally, the covariance matrix, R, nonlinear camera measurement model, h(x), and the Jacobian, H, are implemented to complete the sensor fusion process for the camera measurement model. When tested as a complete sensor fusion system, the visualization shows improved tracking with the key improvement of reduced ghost tracking. The RMSE is now 0.17, 0.11, 0.13 for the three identified tracks.
+
+![png](/img/RMSE_step4.png)
+
+Overall, sensor fusion proves to be a great improvement over only lidar or camera measurement data. The tracking and handling of targets is both quicker and less prone to erroneous measurements. In real-life scenarios, a more advanced system of multiple sensors around the entire vehicle is needed as opposed to the single forward-facing lidar and camera tested here. Track management in this higher complexity system will certainly be more difficult to manage appropriately, however the benefit would be even more improved performance and full 360 degree coverage. Two key ways to improve the results of this project, that can be applied to more complex real-life systems as well, would be to implement a more advanced data association method, such as Global Nearest Neighbor (GNN) or Joint Probabilistic Data Association (JPDA), or to implement a more accurate motion model particularly one that is non-linear.
